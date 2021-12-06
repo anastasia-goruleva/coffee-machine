@@ -4,43 +4,50 @@ public class CoffeeMachineSimulator {
     private int waterAmount;
     private int milkAmount;
     private int coffeeAmount;
+    private int cupNumber;
+    private int money;
 
-    private interface AmountPerCup {
-        int MILK = 50;
-        int WATER = 200;
-        int COFFEE = 15;
+    public CoffeeMachineSimulator() {
+        this(400, 540, 120, 9, 550);
     }
 
-    public CoffeeMachineSimulator(int waterAmount, int milkAmount, int coffeeAmount) {
+    public void displayState() {
+        System.out.println("The coffee machine has:");
+        System.out.printf("%d ml of water\n", waterAmount);
+        System.out.printf("%d ml of milk\n", milkAmount);
+        System.out.printf("%d g of coffee beans\n", coffeeAmount);
+        System.out.printf("%d disposable cups\n", cupNumber);
+        System.out.printf("$%d of money\n", money);
+        System.out.println();
+    }
+
+    public void addResources(int waterAmount, int milkAmount, int coffeeAmount, int cupNumber) {
+        this.waterAmount += waterAmount;
+        this.milkAmount += milkAmount;
+        this.coffeeAmount += coffeeAmount;
+        this.cupNumber += cupNumber;
+    }
+
+    public void buy(CoffeeSort coffeeSort) {
+        waterAmount -= coffeeSort.getWaterAmount();
+        milkAmount -= coffeeSort.getMilAmount();
+        coffeeAmount -= coffeeSort.getCoffeeAmount();
+        --cupNumber;
+        money += coffeeSort.getCost();
+    }
+
+    public int giveMoney() {
+        final var currentMoney = money;
+        money = 0;
+        return currentMoney;
+    }
+
+    private CoffeeMachineSimulator(int waterAmount, int milkAmount, int coffeeAmount, int cupNumber, int money) {
         this.waterAmount = waterAmount;
         this.milkAmount = milkAmount;
         this.coffeeAmount = coffeeAmount;
-    }
-
-    public void displayNumberOfServings(int requestedNumber) {
-        final var realNumber = computeNumberOfServings();
-        String answer;
-        if (realNumber < requestedNumber) {
-            answer = String.format("No, I can make only %d cup(s) of coffee", realNumber);
-        } else if (realNumber > requestedNumber) {
-            answer = String.format("Yes, I can make that amount of cofee (and even %d more than that)",
-                    realNumber - requestedNumber);
-        } else {
-            answer = "Yes, I can make that amount of coffee";
-        }
-        System.out.println(answer);
-    }
-
-    private int computeNumberOfServings() {
-        return Math.min(waterAmount / AmountPerCup.WATER,
-                Math.min(milkAmount / AmountPerCup.MILK, coffeeAmount / AmountPerCup.COFFEE));
-    }
-
-    public static void displayIngredients(int cupNumber) {
-        System.out.printf("For %d cups of coffee you will need:\n", cupNumber);
-        System.out.printf("%d ml of water\n", AmountPerCup.WATER * cupNumber);
-        System.out.printf("%d ml of milk\n", AmountPerCup.MILK * cupNumber);
-        System.out.printf("%d g of coffee beans\n", AmountPerCup.COFFEE * cupNumber);
+        this.cupNumber = cupNumber;
+        this.money = money;
     }
 
     public static void makeCoffee() {

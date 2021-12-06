@@ -6,7 +6,7 @@ subprojects {
 
     def userJava = Integer.parseInt(JavaVersion.current().getMajorVersion())
     def hsJava = Integer.parseInt(hs.java.version)
-    def testJava = Math.max(userJava, hsJava)
+    def testJava = Math.min(userJava, hsJava)
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(testJava)
 
