@@ -6,24 +6,31 @@ public class CoffeeMachine {
     public static void main(String[] args) {
         final var scanner = new Scanner(System.in);
         final var coffeeMachine = new CoffeeMachineSimulator();
-        coffeeMachine.displayState();
-        switch (askActionFromUser(scanner)) {
-            case "fill":
-                addResources(scanner, coffeeMachine);
-                break;
+        String action;
+        do {
+            action = askActionFromUser(scanner);
+            System.out.println();
 
-            case "buy":
-                buyCoffee(scanner, coffeeMachine);
-                break;
+            switch (action) {
+                case "fill":
+                    addResources(scanner, coffeeMachine);
+                    break;
 
-            case "take":
-                takeMoney(coffeeMachine);
-                break;
-        }
+                case "buy":
+                    buyCoffee(scanner, coffeeMachine);
+                    break;
 
-        System.out.println();
+                case "take":
+                    takeMoney(coffeeMachine);
+                    break;
 
-        coffeeMachine.displayState();
+                case "remaining":
+                    coffeeMachine.displayState();
+                    break;
+            }
+
+            System.out.println();
+        } while (!action.equals("exit"));
     }
 
     private static void takeMoney(CoffeeMachineSimulator coffeeMachine) {
@@ -31,8 +38,16 @@ public class CoffeeMachine {
     }
 
     private static void buyCoffee(Scanner scanner, CoffeeMachineSimulator coffeeMachine) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
-        coffeeMachine.buy(CoffeeSort.values()[scanner.nextInt() - 1]);
+        System.out.println(
+                "What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        String answer = scanner.next();
+        if (!answer.equalsIgnoreCase("back")) {
+            try {
+                coffeeMachine.buy(CoffeeSort.values()[Integer.parseInt(answer) - 1]);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
     private static void addResources(Scanner scanner, CoffeeMachineSimulator coffeeMachine) {
@@ -52,12 +67,7 @@ public class CoffeeMachine {
     }
 
     private static String askActionFromUser(Scanner scanner) {
-        System.out.println("Write action (buy, fill, take):");
+        System.out.println("Write action (buy, fill, take, remaining, exit):");
         return scanner.next().toLowerCase();
-    }
-
-    private static int askCupNumber(Scanner scanner) {
-        System.out.println("Write how many cups of coffee you will need:");
-        return scanner.nextInt();
     }
 }

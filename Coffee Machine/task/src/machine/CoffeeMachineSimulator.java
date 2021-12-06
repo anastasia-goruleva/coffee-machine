@@ -18,7 +18,6 @@ public class CoffeeMachineSimulator {
         System.out.printf("%d g of coffee beans\n", coffeeAmount);
         System.out.printf("%d disposable cups\n", cupNumber);
         System.out.printf("$%d of money\n", money);
-        System.out.println();
     }
 
     public void addResources(int waterAmount, int milkAmount, int coffeeAmount, int cupNumber) {
@@ -29,6 +28,27 @@ public class CoffeeMachineSimulator {
     }
 
     public void buy(CoffeeSort coffeeSort) {
+        final var failureMessageFormat = "Sorry, not enough %s!";
+        String failureMessage = null;
+        if (coffeeSort.getWaterAmount() > waterAmount) {
+            failureMessage = String.format(failureMessageFormat, "water");
+        } else if (coffeeSort.getMilAmount() > milkAmount) {
+            failureMessage = String.format(failureMessageFormat, "milk");
+        } else if (coffeeSort.getCoffeeAmount() > coffeeAmount) {
+            failureMessage = String.format(failureMessageFormat, "coffee beans");
+        } else if (cupNumber < 1) {
+            failureMessage = String.format(failureMessageFormat, "disposable cups");
+        }
+
+        if (failureMessage != null) {
+            throw new RuntimeException(failureMessage);
+        }
+
+        System.out.println("I have enough resources, making you a coffee!");
+        makeCoffee(coffeeSort);
+    }
+
+    private void makeCoffee(CoffeeSort coffeeSort) {
         waterAmount -= coffeeSort.getWaterAmount();
         milkAmount -= coffeeSort.getMilAmount();
         coffeeAmount -= coffeeSort.getCoffeeAmount();
