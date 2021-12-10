@@ -6,9 +6,10 @@ public class CoffeeMachine {
     public static void main(String[] args) {
         final var scanner = new Scanner(System.in);
         final var coffeeMachine = new CoffeeMachineSimulator();
-        String action;
-        do {
-            action = askActionFromUser(scanner);
+
+        mainCycle:
+        while (true) {
+            final var action = askActionFromUser(scanner);
             System.out.println();
 
             switch (action) {
@@ -27,10 +28,17 @@ public class CoffeeMachine {
                 case "remaining":
                     coffeeMachine.displayState();
                     break;
+
+                case "exit":
+                    break mainCycle;
+
+                default:
+                    System.out.println("Unknown action");
+                    break;
             }
 
             System.out.println();
-        } while (!action.equals("exit"));
+        }
     }
 
     private static void takeMoney(CoffeeMachineSimulator coffeeMachine) {
@@ -44,8 +52,10 @@ public class CoffeeMachine {
         if (!answer.equalsIgnoreCase("back")) {
             try {
                 coffeeMachine.buy(CoffeeSort.values()[Integer.parseInt(answer) - 1]);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+            } catch (NotEnoughResourcesException resourcesException) {
+                System.out.println(resourcesException.getMessage());
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException other) {
+                System.out.println("Input coffee sort number (1 - 3) or back to return to the main menu");
             }
         }
     }

@@ -28,24 +28,32 @@ public class CoffeeMachineSimulator {
     }
 
     public void buy(CoffeeSort coffeeSort) {
-        final var failureMessageFormat = "Sorry, not enough %s!";
-        String failureMessage = null;
-        if (coffeeSort.getWaterAmount() > waterAmount) {
-            failureMessage = String.format(failureMessageFormat, "water");
-        } else if (coffeeSort.getMilAmount() > milkAmount) {
-            failureMessage = String.format(failureMessageFormat, "milk");
-        } else if (coffeeSort.getCoffeeAmount() > coffeeAmount) {
-            failureMessage = String.format(failureMessageFormat, "coffee beans");
-        } else if (cupNumber < 1) {
-            failureMessage = String.format(failureMessageFormat, "disposable cups");
-        }
-
-        if (failureMessage != null) {
-            throw new RuntimeException(failureMessage);
-        }
-
-        System.out.println("I have enough resources, making you a coffee!");
+        checkResources(coffeeSort);
         makeCoffee(coffeeSort);
+    }
+
+    private void checkResources(CoffeeSort coffeeSort) {
+        final var failureMessageFormat = "Sorry, not enough %s!";
+        String messsage = null;
+        var hasEnoughResources = false;
+        if (coffeeSort.getWaterAmount() > waterAmount) {
+            messsage = String.format(failureMessageFormat, "water");
+        } else if (coffeeSort.getMilAmount() > milkAmount) {
+            messsage = String.format(failureMessageFormat, "milk");
+        } else if (coffeeSort.getCoffeeAmount() > coffeeAmount) {
+            messsage = String.format(failureMessageFormat, "coffee beans");
+        } else if (cupNumber < 1) {
+            messsage = String.format(failureMessageFormat, "disposable cups");
+        } else {
+            messsage = "I have enough resources, making you a coffee!";
+            hasEnoughResources = true;
+        }
+
+        if (!hasEnoughResources) {
+            throw new NotEnoughResourcesException(messsage);
+        }
+
+        System.out.println(messsage);
     }
 
     private void makeCoffee(CoffeeSort coffeeSort) {
@@ -68,15 +76,5 @@ public class CoffeeMachineSimulator {
         this.coffeeAmount = coffeeAmount;
         this.cupNumber = cupNumber;
         this.money = money;
-    }
-
-    public static void makeCoffee() {
-        System.out.println("Starting to make a coffee");
-        System.out.println("Grinding coffee beans");
-        System.out.println("Boiling water");
-        System.out.println("Mixing boiled water with crushed coffee beans");
-        System.out.println("Pouring coffee into the cup");
-        System.out.println("Pouring some milk into the cup");
-        System.out.println("Coffee is ready!");
     }
 }
